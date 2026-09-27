@@ -31,13 +31,23 @@ model User {
 
   orders Order[]
 
-  addresses Address[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  products  Product[]
-  cart      Cart?
+  addresses     Address[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  products      Product[]
+  cart          Cart?
+  refreshTokens RefreshToken[]
 
   @@index([email])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Address {

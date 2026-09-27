@@ -1,10 +1,31 @@
-
 import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { CLIENT_URL } from './config/config.js';
+import { CLIENT_URL } from './config/env.config.js';
+import { pinoHttp } from 'pino-http';
+import { logger } from './lib/logger.js';
+import cookieParser from 'cookie-parser';
+import errorMiddleware from './middlewares/error.middleware.js';
 
 const app: Express = express();
+
+// HTTP logging
+app.use(
+  pinoHttp({
+    logger,
+
+    serializers: {
+      req: (req) => ({
+        method: req.method,
+        url: req.url,
+      }),
+
+      res: (res) => ({
+        statusCode: res.statusCode,
+      }),
+    },
+  }),
+);
 
 // Security
 app.use(helmet());
@@ -18,6 +39,13 @@ app.use(
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: CLIENT_URL,
+    credentials: true,
+  }),
+);
+app.use(cookieParser());
 
 // Health check
 app.get('/api/health', (_req, res) => {
@@ -28,5 +56,6 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
+app.use(errorMiddleware);
 
 export default app;
