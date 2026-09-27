@@ -11,23 +11,16 @@ export class AuthRepository implements IAuthRepository {
       },
     });
   }
-  async createUser(
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string,
-    phoneNumber: string,
-    role?: Role,
-  ) {
+  async createUser(data: {
+    firstName: string;
+    lastName?: string | null;
+    email: string;
+    password: string;
+    phoneNumber: string;
+    role?: Role;
+  }) {
     const user = await prisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        email,
-        password,
-        phoneNumber,
-        role,
-      },
+      data,
     });
 
     return user;

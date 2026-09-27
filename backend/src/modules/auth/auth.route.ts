@@ -7,3 +7,6 @@ import { authController } from './auth.container.js';
 const router = express.Router();
 
 router.post('/register', validate(registerUserSchema), authController.login);
+
+
+export default router;

@@ -6,7 +6,7 @@ import { pinoHttp } from 'pino-http';
 import { logger } from './lib/logger.js';
 import cookieParser from 'cookie-parser';
 import errorMiddleware from './middlewares/error.middleware.js';
-
+import authRoute from './modules/auth/auth.route.js';
 const app: Express = express();
 
 // HTTP logging
@@ -46,6 +46,8 @@ app.use(
   }),
 );
 app.use(cookieParser());
+
+app.use('/api/v1/auth', authRoute);
 
 // Health check
 app.get('/api/health', (_req, res) => {
