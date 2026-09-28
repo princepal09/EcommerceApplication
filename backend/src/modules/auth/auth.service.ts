@@ -93,7 +93,7 @@ export class AuthService {
     return toUserResponse(user);
   }
 
-  async logout(refreshToken:string) {
+  async logout(refreshToken: string) {
     const hashedRefreshToken = hashRefreshToken(refreshToken);
 
     const exisitingRefreshToken = await this.repo.findRefreshToken(hashedRefreshToken);
@@ -105,6 +105,10 @@ export class AuthService {
     await this.repo.deleteRefreshTokenById(exisitingRefreshToken.id);
 
     return true;
+  }
 
+  async logoutAllDevices(userId: string) {
+    await this.repo.deleteAllRefreshTokenByUserId(userId);
+    return true;
   }
 }

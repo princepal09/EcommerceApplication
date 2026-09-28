@@ -11,5 +11,6 @@ router.post('/register', validate(registerUserSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.get('/get-me', verifyUser, authController.getLoggedInUser)
 router.post('/logout', verifyUser, validate(logoutSchema),authController.logout)
+router.post('/logout-all', verifyUser, authController.logoutAll)
 
 export default router;

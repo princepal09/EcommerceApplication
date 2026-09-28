@@ -43,4 +43,16 @@ export class AuthController {
 
     sendResponse(res, 200, 'User Logout successfully', null);
   });
+
+  logoutAll = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user.id;
+
+    const isLoggedOutOfAllDevices = await this.service.logoutAllDevices(userId);
+
+    if (isLoggedOutOfAllDevices) {
+      destroyCookies(res);
+    }
+
+    sendResponse(res, 200, 'User log out of all devices');
+  });
 }
