@@ -1,6 +1,11 @@
+import { IJwtPayload } from '../../types/index.js';
 import ApiError from '../../utils/ApiError.js';
 import { comparePassword, hashPassword, hashRefreshToken } from '../../utils/auth.helper.js';
-import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.helper.js';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+} from '../../utils/jwt.helper.js';
 import { IAuthRepository } from './auth.interface.js';
 import { toJwtPayload, toUserResponse } from './auth.mapper.js';
 import { loginUserDTO, logoutUserDTO, registerUserDTO } from './auth.schema.js';
@@ -110,5 +115,40 @@ export class AuthService {
   async logoutAllDevices(userId: string) {
     await this.repo.deleteAllRefreshTokenByUserId(userId);
     return true;
+  }
+
+  async refreshToken(refreshToken: string, userId: string) {
+    let decoded;
+    try {
+      decoded = verifyRefreshToken(refreshToken) as IJwtPayload;
+    } catch (err) {
+      throw new ApiError(403, 'Invalid or expired refresh token');
+    }
+
+    const hashedOldRefreshToken = hashRefreshToken(refreshToken);
+
+    const exisitingRefreshToken = await this.repo.findRefreshToken(hashedOldRefreshToken);
+
+    if (!exisitingRefreshToken) {
+      throw new ApiError(404, 'Refresh token not found');
+    }
+
+    await this.repo.deleteRefreshTokenById(exisitingRefreshToken.id);
+
+    const newAccessToken = generateAccessToken(decoded);
+    const newRefreshToken = generateRefreshToken(decoded);
+
+    const hashedNewRefreshToken = hashRefreshToken(newRefreshToken);
+
+    await this.repo.createRefreshToken({
+      token: hashedNewRefreshToken,
+      userId: decoded.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    });
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
   }
 }

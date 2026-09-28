@@ -53,6 +53,15 @@ export class AuthController {
       destroyCookies(res);
     }
 
-    sendResponse(res, 200, 'User log out of all devices');
+    sendResponse(res, 200, 'User log out of all devices', null);
+  });
+
+  refreshToken = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    const refreshToken = req.cookies.refreshToken;
+
+    const result = await this.service.refreshToken(refreshToken, userId);
+
+    sendResponse(res, 200, 'Refresh Token generate successfully', result);
   });
 }

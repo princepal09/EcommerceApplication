@@ -23,6 +23,9 @@ export const logoutSchema = z
   })
   .strict();
 
+export const refreshTokenSchema = z.object({ refreshToken: z.string().optional() });
+
 export type registerUserDTO = z.infer<typeof registerUserSchema>;
 export type loginUserDTO = z.infer<typeof loginSchema>;
 export type logoutUserDTO = z.infer<typeof logoutSchema>;
+export type refreshTokenSchemaDTO = z.infer<typeof refreshTokenSchema>;
