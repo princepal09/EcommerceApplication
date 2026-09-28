@@ -19,18 +19,16 @@ export const generateAccessToken = (user: IJwtPayload) => {
   });
 };
 
-export const generateRefreshToken = (user:IJwtPayload) => {
+export const generateRefreshToken = (user: IJwtPayload) => {
   return jwt.sign({ user }, refreshTokenSecret, {
     expiresIn: refeshTokenExpiry,
   });
 };
 
-
 export const verifyAccessToken = (token: string) => {
-    return jwt.verify(token, accessTokenSecret)
-}
+  return jwt.verify(token, accessTokenSecret);
+};
 
 export const verifyRefreshToken = (token: string) => {
-    return jwt.verify(token, refreshTokenSecret)
-}
-
+  return jwt.verify(token, refreshTokenSecret);
+};

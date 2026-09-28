@@ -37,4 +37,12 @@ export class AuthRepository implements IAuthRepository {
 
     return token;
   }
+
+  async findUserById(userId: string): Promise<User | null> {
+    return prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+  }
 }

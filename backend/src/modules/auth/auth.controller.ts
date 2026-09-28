@@ -3,6 +3,7 @@ import { asyncHandler } from '../../utils/AsyncHandler.js';
 import { Request, Response } from 'express';
 import { sendResponse } from '../../utils/sendResponse.js';
 import { setCookies } from '../../utils/auth.helper.js';
+import ApiError from '../../utils/ApiError.js';
 
 export class AuthController {
   constructor(private readonly service: AuthService) {}
@@ -22,4 +23,13 @@ export class AuthController {
     sendResponse(res, 200, 'User Logged in successfully', result);
   });
 
+  getLoggedInUser = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.user.id;
+    if (!userId) {
+      throw new ApiError(404, 'UserId not found');
+    }
+    const result = await this.service.getCurrentUser(userId);
+
+    sendResponse(res, 200, 'User details fetched successfully', result);
+  });
 }

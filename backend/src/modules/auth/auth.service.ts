@@ -83,4 +83,13 @@ export class AuthService {
       refreshToken,
     };
   }
+
+  async getCurrentUser(userId: string) {
+    const user = await this.repo.findUserById(userId);
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
+
+    return toUserResponse(user);
+  }
 }
