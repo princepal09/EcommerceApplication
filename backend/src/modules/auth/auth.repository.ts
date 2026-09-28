@@ -1,4 +1,4 @@
-import { User } from '../../../generated/prisma/client.js';
+import { RefreshToken, User } from '../../../generated/prisma/client.js';
 import { Role } from '../../../generated/prisma/enums.js';
 import { prisma } from '../../lib/prisma.js';
 import { IAuthRepository } from './auth.interface.js';
@@ -24,5 +24,17 @@ export class AuthRepository implements IAuthRepository {
     });
 
     return user;
+  }
+
+  async createRefreshToken(data: {
+    token: string;
+    userId: string;
+    expiresAt: Date;
+  }): Promise<RefreshToken> {
+    const token = await prisma.refreshToken.create({
+      data,
+    });
+
+    return token;
   }
 }

@@ -1,8 +1,9 @@
 import ApiError from '../../utils/ApiError.js';
-import { hashPassword } from '../../utils/auth.helper.js';
+import { comparePassword, hashPassword, hashRefreshToken } from '../../utils/auth.helper.js';
+import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.helper.js';
 import { IAuthRepository } from './auth.interface.js';
-import { toUserResponse } from './auth.mapper.js';
-import { registerUserDTO } from './auth.schema.js';
+import { toJwtPayload, toUserResponse } from './auth.mapper.js';
+import { loginUserDTO, registerUserDTO } from './auth.schema.js';
 
 export class AuthService {
   constructor(private readonly repo: IAuthRepository) {}
@@ -31,6 +32,55 @@ export class AuthService {
       throw new ApiError(500, 'Failed to create user');
     }
 
-    return toUserResponse(newUser);
+    const jwtPayload = toJwtPayload(newUser);
+
+    const accessToken = generateAccessToken(jwtPayload);
+    const refreshToken = generateRefreshToken(jwtPayload);
+
+    const hashedRefreshToken = hashRefreshToken(refreshToken);
+
+    await this.repo.createRefreshToken({
+      token: hashedRefreshToken,
+      userId: newUser.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    });
+
+    return {
+      user: toUserResponse(newUser),
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async loginUserService(data: loginUserDTO) {
+    const { email, password } = data;
+
+    const existingUser = await this.repo.findUserByEmail(email);
+    if (!existingUser) {
+      throw new ApiError(404, 'User not found, Please signup first');
+    }
+
+    const isPwdValid = await comparePassword(password, existingUser.password);
+    if (!isPwdValid) {
+      throw new ApiError(404, 'Invalid Email or password');
+    }
+
+    const jwtPayload = toJwtPayload(existingUser);
+    const accessToken = generateAccessToken(jwtPayload);
+    const refreshToken = generateRefreshToken(jwtPayload);
+
+    const hashedRefreshToken = hashRefreshToken(refreshToken);
+
+    await this.repo.createRefreshToken({
+      token: hashedRefreshToken,
+      userId: existingUser.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    });
+
+    return {
+      user: toUserResponse(existingUser),
+      accessToken,
+      refreshToken,
+    };
   }
 }

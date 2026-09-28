@@ -13,3 +13,13 @@ export const toUserResponse = (user: User): UserResponseDTO => {
     updatedAt: user.updatedAt,
   };
 };
+
+export const toJwtPayload = (user: User) => {
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+};

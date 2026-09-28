@@ -1,5 +1,5 @@
-import { User } from "../../../generated/prisma/client.js";
-import { Role } from "../../../generated/prisma/enums.js";
+import { RefreshToken, User } from '../../../generated/prisma/client.js';
+import { Role } from '../../../generated/prisma/enums.js';
 
 export interface IAuthRepository {
   findUserByEmail(email: string): Promise<User | null>;
@@ -11,4 +11,10 @@ export interface IAuthRepository {
     phoneNumber: string;
     role?: Role;
   }): Promise<User | null>;
+
+  createRefreshToken(data: {
+    token: string;
+    userId: string;
+    expiresAt: Date;
+  }): Promise<RefreshToken>;
 }

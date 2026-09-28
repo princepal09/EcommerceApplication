@@ -1,5 +1,5 @@
 import dotenv from "dotenv"
 dotenv.config();
 
-export const {PORT, DATABASE_URL, CLIENT_URL} = process.env;
+export const {PORT, DATABASE_URL, CLIENT_URL, JWT_ACCESS_TOKEN_SECRET, JWT_ACCESS_TOKEN_EXPIRY, JWT_REFRESH_TOKEN_SECRET,JWT_REFRESH_TOKEN_EXPIRY, NODE_ENV   } = process.env;
 
