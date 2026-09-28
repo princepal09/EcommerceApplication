@@ -117,38 +117,45 @@ export class AuthService {
     return true;
   }
 
-  async refreshToken(refreshToken: string, userId: string) {
-    let decoded;
-    try {
-      decoded = verifyRefreshToken(refreshToken) as IJwtPayload;
-    } catch (err) {
-      throw new ApiError(403, 'Invalid or expired refresh token');
-    }
+ async refreshToken(refreshToken: string) {
+  let decoded: { user: IJwtPayload };
 
-    const hashedOldRefreshToken = hashRefreshToken(refreshToken);
-
-    const exisitingRefreshToken = await this.repo.findRefreshToken(hashedOldRefreshToken);
-
-    if (!exisitingRefreshToken) {
-      throw new ApiError(404, 'Refresh token not found');
-    }
-
-    await this.repo.deleteRefreshTokenById(exisitingRefreshToken.id);
-
-    const newAccessToken = generateAccessToken(decoded);
-    const newRefreshToken = generateRefreshToken(decoded);
-
-    const hashedNewRefreshToken = hashRefreshToken(newRefreshToken);
-
-    await this.repo.createRefreshToken({
-      token: hashedNewRefreshToken,
-      userId: decoded.id,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    });
-
-    return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
+  try {
+    decoded = verifyRefreshToken(refreshToken) as {
+      user: IJwtPayload;
     };
+  } catch (err) {
+    throw new ApiError(403, "Invalid or expired refresh token");
   }
+
+  const hashedOldRefreshToken = hashRefreshToken(refreshToken);
+
+  const existingRefreshToken =
+    await this.repo.findRefreshToken(hashedOldRefreshToken);
+
+  if (!existingRefreshToken) {
+    throw new ApiError(404, "Refresh token not found");
+  }
+
+  const jwtPayload = decoded.user;
+
+  const newAccessToken = generateAccessToken(jwtPayload);
+  const newRefreshToken = generateRefreshToken(jwtPayload);
+
+  const hashedNewRefreshToken = hashRefreshToken(newRefreshToken);
+
+  // Replace old refresh token with new one
+  await this.repo.deleteRefreshTokenById(existingRefreshToken.id);
+
+  await this.repo.createRefreshToken({
+    token: hashedNewRefreshToken,
+    userId: existingRefreshToken.userId,
+    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  });
+
+  return {
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+  };
+}
 }

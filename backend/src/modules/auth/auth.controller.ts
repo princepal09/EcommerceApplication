@@ -57,10 +57,15 @@ export class AuthController {
   });
 
   refreshToken = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.user.id;
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken;
 
-    const result = await this.service.refreshToken(refreshToken, userId);
+    if (!refreshToken) {
+      throw new ApiError(401, 'Refresh token is required');
+    }
+    
+    const result = await this.service.refreshToken(refreshToken);
+
+    setCookies(res, result.accessToken, result.refreshToken)
 
     sendResponse(res, 200, 'Refresh Token generate successfully', result);
   });
