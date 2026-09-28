@@ -19,4 +19,9 @@ export interface IAuthRepository {
   }): Promise<RefreshToken>;
 
   findUserById(userId : string): Promise<User | null>;
+
+  findRefreshToken(hashedRefreshToken:string) : Promise<RefreshToken | null>
+
+
+  deleteRefreshTokenById(refreshTokenId:string) : Promise<void>
 }

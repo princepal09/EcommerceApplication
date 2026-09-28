@@ -3,7 +3,7 @@ import { comparePassword, hashPassword, hashRefreshToken } from '../../utils/aut
 import { generateAccessToken, generateRefreshToken } from '../../utils/jwt.helper.js';
 import { IAuthRepository } from './auth.interface.js';
 import { toJwtPayload, toUserResponse } from './auth.mapper.js';
-import { loginUserDTO, registerUserDTO } from './auth.schema.js';
+import { loginUserDTO, logoutUserDTO, registerUserDTO } from './auth.schema.js';
 
 export class AuthService {
   constructor(private readonly repo: IAuthRepository) {}
@@ -91,5 +91,20 @@ export class AuthService {
     }
 
     return toUserResponse(user);
+  }
+
+  async logout(refreshToken:string) {
+    const hashedRefreshToken = hashRefreshToken(refreshToken);
+
+    const exisitingRefreshToken = await this.repo.findRefreshToken(hashedRefreshToken);
+
+    if (!exisitingRefreshToken) {
+      throw new ApiError(401, 'Invalid refresh token');
+    }
+
+    await this.repo.deleteRefreshTokenById(exisitingRefreshToken.id);
+
+    return true;
+
   }
 }

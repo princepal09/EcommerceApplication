@@ -2,7 +2,7 @@ import { AuthService } from './auth.service.js';
 import { asyncHandler } from '../../utils/AsyncHandler.js';
 import { Request, Response } from 'express';
 import { sendResponse } from '../../utils/sendResponse.js';
-import { setCookies } from '../../utils/auth.helper.js';
+import { destroyCookies, setCookies } from '../../utils/auth.helper.js';
 import ApiError from '../../utils/ApiError.js';
 
 export class AuthController {
@@ -31,5 +31,16 @@ export class AuthController {
     const result = await this.service.getCurrentUser(userId);
 
     sendResponse(res, 200, 'User details fetched successfully', result);
+  });
+
+  logout = asyncHandler(async (req: Request, res: Response) => {
+    const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+    console.log(refreshToken);
+    const isLoggedOut = await this.service.logout(refreshToken);
+    if (isLoggedOut) {
+      destroyCookies(res);
+    }
+
+    sendResponse(res, 200, 'User Logout successfully', null);
   });
 }
