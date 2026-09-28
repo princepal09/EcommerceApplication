@@ -4,7 +4,6 @@ import { validate } from '../../middlewares/validate.middleware.js';
 import {
   loginSchema,
   logoutSchema,
-  refreshTokenSchema,
   registerUserSchema,
 } from './auth.schema.js';
 import { authController } from './auth.container.js';

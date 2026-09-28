@@ -24,3 +24,23 @@ export const verifyUser = (req: Request, _res: Response, next: NextFunction) => 
     next(new ApiError(401, 'Invalid or expired token'));
   }
 };
+
+export const verifySeller = (req: Request, _res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  if (user.role !== 'SELLER') {
+    throw new ApiError(401, 'You are not authorized.');
+  }
+
+  return next();
+};
+
+export const verifyAdmin = (req: Request, _res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  if (user.role !== 'ADMIN') {
+    throw new ApiError(401, 'You are not authorized.');
+  }
+
+  next();
+};
