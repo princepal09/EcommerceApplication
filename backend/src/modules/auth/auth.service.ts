@@ -8,7 +8,7 @@ import {
 } from '../../utils/jwt.helper.js';
 import { IAuthRepository } from './auth.interface.js';
 import { toJwtPayload, toUserResponse } from './auth.mapper.js';
-import { loginUserDTO, logoutUserDTO, registerUserDTO } from './auth.schema.js';
+import { loginUserDTO, registerUserDTO } from './auth.schema.js';
 
 export class AuthService {
   constructor(private readonly repo: IAuthRepository) {}

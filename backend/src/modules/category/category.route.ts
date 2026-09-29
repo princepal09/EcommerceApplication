@@ -14,6 +14,4 @@ router.post(
   categoryController.createController,
 );
 
-
-
 export default router;
