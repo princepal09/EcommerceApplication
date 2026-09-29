@@ -30,9 +30,9 @@ export const verifySeller = (req: Request, _res: Response, next: NextFunction) =
 
   if (user.role !== 'SELLER') {
     throw new ApiError(401, 'You are not authorized.');
-  }
+  } 
 
-  return next();
+   next();
 };
 
 export const verifyAdmin = (req: Request, _res: Response, next: NextFunction) => {
