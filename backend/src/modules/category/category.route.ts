@@ -14,4 +14,18 @@ router.post(
   categoryController.createController,
 );
 
+router.delete(
+  '/:categoryId',
+  verifyUser,
+  verifyAdmin,
+  categoryController.deleteController,
+);
+
+router.get(
+  '/',
+  verifyUser,
+  verifyAdmin,
+  categoryController.getAllCategoriesController,
+);
+
 export default router;

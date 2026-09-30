@@ -10,3 +10,4 @@ export const toCategoryResponse = (category:Category):CategoryResponseDTO => {
         updatedAt:category.updatedAt
     }
 }
+

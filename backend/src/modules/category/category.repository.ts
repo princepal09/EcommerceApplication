@@ -22,4 +22,27 @@ export class CategoryRepository implements ICategoryRepository {
     });
     return category;
   }
+
+  async findCategoryById(categoryId: string): Promise<Category | null> {
+    const category = await prisma.category.findUnique({
+      where: {
+        id: categoryId,
+      },
+    });
+    return category;
+  }
+
+  async deleteCategoryById(categoryId: string): Promise<void> {
+    await prisma.category.delete({
+      where: {
+        id: categoryId,
+      },
+    });
+  }
+
+  async findAllCategories(): Promise<Category[] | null> {
+    const categories = await prisma.category.findMany({});
+
+    return categories;
+  }
 }
