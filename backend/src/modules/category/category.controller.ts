@@ -23,4 +23,17 @@ export class CategoryController {
 
     sendResponse(res, 200, 'All Categories Fetched  successfully', categories);
   });
+
+  updateCategoryController = asyncHandler(async (req: Request, res: Response) => {
+
+    const categoryId = req.params.categoryId as string;
+
+    const updatedCategory = await this.service.updateCategory(categoryId, req.body);
+
+    sendResponse(res, 200, "Category updated successfully", updatedCategory);
+
+  });
+  
+
 }
+

@@ -1,5 +1,5 @@
 import express from 'express';
-import { createCategorySchema } from './category.schema.js';
+import { createCategorySchema, updateCategorySchema } from './category.schema.js';
 import { categoryController } from './category.container.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { verifyAdmin, verifyUser } from '../../middlewares/auth.middleware.js';
@@ -26,6 +26,14 @@ router.get(
   verifyUser,
   verifyAdmin,
   categoryController.getAllCategoriesController,
+);
+
+router.patch(
+  '/:categoryId',
+  verifyUser,
+  verifyAdmin,
+  validate(updateCategorySchema),
+  categoryController.updateCategoryController,
 );
 
 export default router;

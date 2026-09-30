@@ -2,10 +2,13 @@ import ApiError from '../../utils/ApiError.js';
 import { IProductRepository } from '../product/product.interface.js';
 import { ICategoryRepository } from './category.interface.js';
 import { toCategoryResponse } from './category.mapper.js';
-import { createCategoryDTO } from './category.schema.js';
+import { createCategoryDTO, updateCategoryDTO } from './category.schema.js';
 
 export class CategoryService {
-  constructor(private readonly repo: ICategoryRepository, private readonly productRepo : IProductRepository) {}
+  constructor(
+    private readonly repo: ICategoryRepository,
+    private readonly productRepo: IProductRepository,
+  ) {}
 
   async createCategory(data: createCategoryDTO) {
     const category = await this.repo.findCategoryByName(data.categoryName);
@@ -25,8 +28,8 @@ export class CategoryService {
     const category = await this.repo.findCategoryById(categoryId);
 
     const products = await this.productRepo.getProductsByCategoryId(categoryId);
-    if(products.length < 0){
-        throw new ApiError(400, "Category that contains products cannot be deleted.")
+    if (products.length < 0) {
+      throw new ApiError(400, 'Category that contains products cannot be deleted.');
     }
     if (!category) {
       throw new ApiError(404, 'Category not found');
@@ -39,5 +42,24 @@ export class CategoryService {
     const categories = await this.repo.findAllCategories();
 
     return categories;
+  }
+
+  async updateCategory(categoryId: string, data: updateCategoryDTO) {
+    if (!categoryId) {
+      throw new ApiError(404, 'Category not found');
+    }
+    const category = await this.repo.findCategoryById(categoryId);
+
+    if (!category) {
+      throw new ApiError(404, 'Category not found');
+    }
+
+    const updatedCategory = await this.repo.updateCategory(categoryId, data);
+
+    if(!updatedCategory){
+        throw new ApiError(401, "Cannot update the category")
+    }
+
+    return toCategoryResponse(updatedCategory); 
   }
 }
