@@ -15,4 +15,16 @@ export class ProductController {
     sendResponse(res,201, "Product Created Successfully", result);
     
   });
+
+   getProductsByCategoryController = asyncHandler(async (req: Request, res: Response) => {
+    const categoryId = req.params.categoryId as string;
+
+    const result = await  this.service.getAllProducts(categoryId);
+
+    sendResponse(res, 200, "Products Fetched Successfully", result);
+    
+  });
+
+
+
 }

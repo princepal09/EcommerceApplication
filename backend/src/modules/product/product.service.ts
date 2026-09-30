@@ -27,4 +27,18 @@ export class ProductService {
 
     return toProductResponse(newProduct);
   }
+
+  async getAllProducts(categoryId: string) {
+    if (!categoryId) {
+      throw new ApiError(404, 'Category not found');
+    }
+
+    const products = this.repo.getProductsByCategoryId(categoryId);
+
+    if ((await products).length <= 0) {
+      throw new ApiError(404, 'No Products belong to category');
+    }
+
+    return products;
+  }
 }
