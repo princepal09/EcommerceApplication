@@ -2,8 +2,8 @@ import { Prisma } from '../../../generated/prisma/client.js';
 import ApiError from '../../utils/ApiError.js';
 import { uploadToCloudinary } from '../../utils/cloudinar.helper.js';
 import { IProductRepository } from './product.interface.js';
-import { toProductResponse } from './product.mapper.js';
-import { createProductDTO } from './product.schema.js';
+import { toProductResponse, toProductResponseList } from './product.mapper.js';
+import { createProductDTO, editProductDTO } from './product.schema.js';
 
 export class ProductService {
   constructor(private readonly repo: IProductRepository) {}
@@ -33,17 +33,37 @@ export class ProductService {
       throw new ApiError(404, 'Category not found');
     }
 
-    const products = this.repo.getProductsByCategoryId(categoryId);
+    const products = await this.repo.getProductsByCategoryId(categoryId);
 
     if ((await products).length <= 0) {
       throw new ApiError(404, 'No Products belong to category');
     }
 
-    return products;
+    return toProductResponseList(products);
   }
 
-  async getAllProducts(){
-    const products = this.repo.getAllProducts();
-    return products;
+  async getAllProducts() {
+    const products = await this.repo.getAllProducts();
+    return toProductResponseList(products);
   }
+
+  async updateProduct(data: editProductDTO, productId: string) {
+  if (!productId) {
+    throw new ApiError(404, "Product Id not found");
+  }
+
+  const product = await this.repo.getProductById(productId);
+
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  const updatedProduct = await this.repo.editProduct(data, productId);
+
+  if (!updatedProduct) {
+    throw new ApiError(404, "Product has not been updated");
+  }
+
+  return toProductResponse(updatedProduct);
+}
 }

@@ -1,7 +1,7 @@
 import { Product } from '../../../generated/prisma/client.js';
 import { ProductResponseDTO } from './product.response.js';
 
-export const toProductResponse = (product: Product) : ProductResponseDTO => {
+export const toProductResponse = (product: Product): ProductResponseDTO => {
   return {
     id: product.id,
     productName: product.productName,
@@ -12,4 +12,8 @@ export const toProductResponse = (product: Product) : ProductResponseDTO => {
     createdAt: product.createdAt,
     updatedAt: product.updatedAt,
   };
+};
+
+export const toProductResponseList = (products: Product[]): ProductResponseDTO[] => {
+  return products.map(toProductResponse);
 };

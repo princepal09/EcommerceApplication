@@ -1,7 +1,7 @@
 import express from 'express';
 import { productController } from './product.container.js';
 import { verifySeller, verifyUser } from '../../middlewares/auth.middleware.js';
-import { createProductSchema } from './product.schema.js';
+import { createProductSchema, editProductSchema } from './product.schema.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { upload } from '../../middlewares/multer.middleware.js';
 
@@ -19,5 +19,7 @@ router.post(
 router.get('/:categoryId', productController.getProductsByCategoryController);
 
 router.get('/', productController.getAllProducts);
+
+router.patch("/:productId", verifyUser, verifySeller, validate(editProductSchema), productController.updateProductController)
 
 export default router;

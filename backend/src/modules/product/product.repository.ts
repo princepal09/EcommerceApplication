@@ -1,6 +1,7 @@
 import { Product } from '../../../generated/prisma/client.js';
 import { prisma } from '../../lib/prisma.js';
 import { IProductRepository } from './product.interface.js';
+import { editProductDTO } from './product.schema.js';
 
 export class ProductRepository implements IProductRepository {
   async createProduct(data: {
@@ -28,9 +29,31 @@ export class ProductRepository implements IProductRepository {
     return products;
   }
 
-  async getAllProducts(){
+  async getAllProducts() {
     const products = await prisma.product.findMany({});
     return products;
-
   }
+
+  async editProduct(data: editProductDTO, productId: string): Promise<Product> {
+    const updatedProduct = await prisma.product.update({
+      where: {
+        id: productId,
+      },
+      data: {
+        data,
+      },
+    });
+
+    return updatedProduct;
+  }
+
+  async getProductById(productId: string): Promise<Product | null> {
+    return prisma.product.findUnique({
+      where : {
+        id:productId
+      }
+    })
+  }
+
+  
 }
