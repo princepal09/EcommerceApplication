@@ -27,4 +27,10 @@ export class ProductRepository implements IProductRepository {
     });
     return products;
   }
+
+  async getAllProducts(){
+    const products = await prisma.product.findMany({});
+    return products;
+
+  }
 }

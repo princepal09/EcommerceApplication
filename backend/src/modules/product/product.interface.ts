@@ -5,4 +5,6 @@ export interface IProductRepository{
 
     getProductsByCategoryId(cateogryId:string) : Promise<Product[]>;
 
+    getAllProducts():Promise<Product[]>
+
 }

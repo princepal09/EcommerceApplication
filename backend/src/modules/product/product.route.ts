@@ -18,4 +18,6 @@ router.post(
 
 router.get('/:categoryId', productController.getProductsByCategoryController);
 
+router.get('/', productController.getAllProducts);
+
 export default router;
