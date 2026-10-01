@@ -16,7 +16,9 @@ export interface IProductRepository {
 
   getAllProducts(): Promise<Product[]>;
 
-  editProduct(data: editProductDTO, productId: string): Promise<Product>;
+  editProduct(data: editProductDTO, productId: string, sellerId: string): Promise<Product>;
 
-  getProductById(productId:string) : Promise<Product | null>
+  getProductById(productId: string): Promise<Product | null>;
+
+  getProductByIdAndSellerId(productId: string, sellerId: string): Promise<Product | null>;
 }

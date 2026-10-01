@@ -47,23 +47,23 @@ export class ProductService {
     return toProductResponseList(products);
   }
 
-  async updateProduct(data: editProductDTO, productId: string) {
-  if (!productId) {
-    throw new ApiError(404, "Product Id not found");
+  async updateProduct(data: editProductDTO, productId: string, sellerId: string) {
+    if (!productId) {
+      throw new ApiError(404, 'Product Id not found');
+    }
+
+    const product = await this.repo.getProductByIdAndSellerId(productId, sellerId);
+
+    if (!product) {
+      throw new ApiError(404, 'Product not found');
+    }
+
+    const updatedProduct = await this.repo.editProduct(data, productId, sellerId);
+
+    if (!updatedProduct) {
+      throw new ApiError(404, 'Product has not been updated');
+    }
+
+    return toProductResponse(updatedProduct);
   }
-
-  const product = await this.repo.getProductById(productId);
-
-  if (!product) {
-    throw new ApiError(404, "Product not found");
-  }
-
-  const updatedProduct = await this.repo.editProduct(data, productId);
-
-  if (!updatedProduct) {
-    throw new ApiError(404, "Product has not been updated");
-  }
-
-  return toProductResponse(updatedProduct);
-}
 }

@@ -34,10 +34,11 @@ export class ProductRepository implements IProductRepository {
     return products;
   }
 
-  async editProduct(data: editProductDTO, productId: string): Promise<Product> {
+  async editProduct(data: editProductDTO, productId: string, sellerId:string): Promise<Product> {
     const updatedProduct = await prisma.product.update({
       where: {
         id: productId,
+        userId:sellerId
       },
       data: {
         data,
@@ -49,11 +50,18 @@ export class ProductRepository implements IProductRepository {
 
   async getProductById(productId: string): Promise<Product | null> {
     return prisma.product.findUnique({
-      where : {
-        id:productId
-      }
-    })
+      where: {
+        id: productId,
+      },
+    });
   }
 
-  
+  async getProductByIdAndSellerId(productId: string, sellerId: string): Promise<Product | null> {
+    return prisma.product.findFirst({
+      where: {
+        id: productId,
+        userId: sellerId,
+      },
+    });
+  }
 }

@@ -33,7 +33,8 @@ export class ProductController {
 
   updateProductController = asyncHandler(async (req:Request, res:Response) => {
     const productId = req.params.productId as string;
-    const updatedProduct = await this.service.updateProduct(req.body, productId);
+    const sellerId = req.user.id;
+    const updatedProduct = await this.service.updateProduct(req.body, productId, sellerId);
     sendResponse(res, 200, 'Product Edited successfully', updatedProduct);
 
   })
