@@ -21,4 +21,6 @@ export interface IProductRepository {
   getProductById(productId: string): Promise<Product | null>;
 
   getProductByIdAndSellerId(productId: string, sellerId: string): Promise<Product | null>;
+
+  deleteProductById(productId:string):Promise<void>
 }

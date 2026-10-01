@@ -38,4 +38,14 @@ export class ProductController {
     sendResponse(res, 200, 'Product Edited successfully', updatedProduct);
 
   })
+
+   deleteProductController = asyncHandler(async (req:Request, res:Response) => {
+
+    const productId = req.params.productId as string;
+    const sellerId = req.user.id;
+
+    await this.service.deleteProduct(productId, sellerId);
+    sendResponse(res, 200, "Product Deleted Successfully", null);
+
+  })
 }

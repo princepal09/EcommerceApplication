@@ -66,4 +66,22 @@ export class ProductService {
 
     return toProductResponse(updatedProduct);
   }
+
+  async deleteProduct(productId: string, sellerId: string) {
+    if (!productId) {
+      throw new ApiError(404, 'Product Id not found');
+    }
+
+    const product = await this.repo.getProductById(productId);
+
+    if (!product) {
+      throw new ApiError(404, 'Product not found');
+    }
+
+    if (product.id !== sellerId) {
+      throw new ApiError(401, "You don't have a persmission to do this process");
+    }
+
+    await this.repo.deleteProductById(productId);
+  }
 }
